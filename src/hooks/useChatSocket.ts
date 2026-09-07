@@ -38,18 +38,10 @@ export function useChatSocket() {
       dispatch(fetchConversations());
     });
 
-    // Safety polling fallback every 6 seconds to ensure zero missed messages
-    const pollInterval = setInterval(() => {
-      if (activeConversationId && token) {
-        dispatch(fetchMessages(activeConversationId));
-      }
-    }, 6000);
-
     return () => {
       unsubStatus();
       unsubMessage();
       unsubConv();
-      clearInterval(pollInterval);
     };
-  }, [token, user?._id, activeConversationId, dispatch]);
+  }, [token, user?._id, dispatch]);
 }
