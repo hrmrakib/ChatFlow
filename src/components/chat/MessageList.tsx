@@ -25,6 +25,8 @@ export const MessageList: React.FC<MessageListProps> = ({ conversation }) => {
   const { messages, isLoadingMessages } = useAppSelector((state) => state.chat);
   const { user: currentUser } = useAppSelector((state) => state.auth);
 
+console.log({messages})
+
   const conversationMessages = useMemo(() => {
     return messages[conversation._id] || [];
   }, [messages, conversation._id]);

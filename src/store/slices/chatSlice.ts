@@ -92,32 +92,7 @@ export const sendMessage = createAsyncThunk<
   }
 
   try {
-    let sentMsg: Message;
-    // Prefer socket emission if connected with fallback to REST API
-    if (socketService.isConnected()) {
-      sentMsg = await new Promise<Message>((resolve, reject) => {
-        socketService.sendMessage(conversationId, text.trim(), (ack) => {
-          if (ack && ack.error) {
-            reject(new Error(ack.error));
-          } else {
-            resolve({
-              _id: `sock_${Date.now()}`,
-              conversation: conversationId,
-              sender: user._id,
-              text: text.trim(),
-              createdAt: new Date().toISOString(),
-              status: 'sent',
-            });
-          }
-        });
-        // Timeout fallback to REST
-        setTimeout(() => {
-          resolve(api.messages.send(conversationId, text.trim(), token));
-        }, 1500);
-      });
-    } else {
-      sentMsg = await api.messages.send(conversationId, text.trim(), token);
-    }
+    const sentMsg = await api.messages.send(conversationId, text.trim(), token);
 
     dispatch(chatSlice.actions.reconcileMessage({ tempId, realMessage: sentMsg }));
     return sentMsg;
@@ -247,13 +222,8 @@ export const chatSlice = createSlice({
       }
 
       const list = state.messages[convId];
-      // Check if already exists (by _id or matching text + recent timestamp)
-      const exists = list.some(
-        (m) =>
-          m._id === message._id ||
-          (m.text === message.text &&
-            Math.abs(new Date(m.createdAt).getTime() - new Date(message.createdAt).getTime()) < 3000)
-      );
+      // Check if already exists (by _id)
+      const exists = list.some((m) => m._id === message._id);
 
       if (!exists) {
         list.push({ ...message, status: 'sent' });
@@ -333,7 +303,9 @@ export const chatSlice = createSlice({
       .addCase(fetchMessages.fulfilled, (state, action) => {
         state.isLoadingMessages = false;
         const { conversationId, messages } = action.payload;
-        state.messages[conversationId] = messages;
+        // The API returns messages in descending order (newest first). 
+        // We reverse them to ascending order so the newest are at the bottom.
+        state.messages[conversationId] = messages.slice().reverse();
       })
       .addCase(fetchMessages.rejected, (state, action) => {
         state.isLoadingMessages = false;
