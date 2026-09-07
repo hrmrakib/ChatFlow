@@ -1,0 +1,6 @@
+{
+  "name": "ChatFlow - Real-Time Chat & Platform Showcase",
+  "description": "Production-grade real-time chat application with Socket.io, Redux Toolkit, complete API documentation, creative landing page, and thought process write-up.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
