@@ -1,104 +1,80 @@
-# ChatFlow — Frontend Take-Home Assignment Deliverable
+# ChatFlow
 
-A production-grade, real-time messaging application engineered with **Next.js architectural principles, React 19, TypeScript, Redux Toolkit, Socket.io, and Tailwind CSS**.
+This repository contains the source code for the ChatFlow frontend developer take-home assignment. It includes a real-time messaging application (Part 1), a creative landing page (Part 2), and a detailed breakdown of architectural decisions (Part 3).
 
-This repository contains all three deliverables requested in the take-home specification:
-1. **Part 1:** Standalone API Documentation & Live Core Chat Application (Login, direct 1-to-1 chats, group creation and member/admin management, message history, optimistic sends, real-time updates via Socket.io with HTTP polling fallback, smart auto-scroll ergonomics, audio chimes, and loading/empty/error states).
-2. **Part 2:** Creative Landing Page showcasing the chat application with an interactive live hero simulator, technical architecture breakdown, and feature matrices.
-3. **Part 3:** Comprehensive Thought Process & Architecture Write-up (covering architectural decisions, Redux Toolkit state design, Socket.io duplex integration, AI tool usage log, API quirks handled, and future roadmap).
+## Live Demos
+- **Landing Page (Part 2):** [Insert Landing Page URL]
+- **Chat Application (Part 1):** [Insert Chat App URL]
 
----
-
-## Quick Start & Setup
+## Getting Started
 
 ### Prerequisites
-- Node.js 18+ or 20+
-- npm or pnpm or yarn
+- Node.js (v18 or higher)
+- npm, pnpm, or yarn
 
 ### Installation
-```bash
-# 1. Install dependencies
-npm install
 
-# 2. Start the development server
-npm run dev
-```
-Open your browser at `http://localhost:3000` (or the deployed live preview URL).
+1. Clone the repository and install dependencies:
+   ```bash
+   npm install
+   ```
 
----
+2. Create a `.env` file in the root directory (you can use `.env.example` as a reference):
+   ```env
+   NEXT_PUBLIC_API_BASE_URL=https://frontend-task-chatapp.onrender.com/api
+   NEXT_PUBLIC_SOCKET_ORIGIN=https://frontend-task-chatapp.onrender.com
+   ```
 
-## Tech Stack & Architecture
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-- **Framework & Language:** React 19, Next.js / Vite SPA structure, TypeScript (strict types, zero `any` shortcuts).
-- **State Management:** Redux Toolkit (`@reduxjs/toolkit`, `react-redux`) with normalized state slices:
-  - `authSlice`: Handles user credentials, session restoration from `localStorage`, and test account presets.
-  - `chatSlice`: Manages conversation registries, message histories keyed by `conversationId`, optimistic message dispatch, delivery reconciliation, and socket connection telemetry.
-- **Real-Time Duplex Communication:**
-  - `socket.io-client`: Connected to the server root origin (`https://frontend-task-chatapp.onrender.com`) authenticated via JWT in the handshake.
-  - Subscribes to `message:new` and `conversation:updated` events.
-  - Supported by a resilient background polling interval (every 6 seconds) with idempotent deduplication to guard against mobile sleep or proxy drops.
-- **Styling & Design System:** Tailwind CSS with a high-contrast dark aesthetic (`slate-950` canvas, `indigo-600` brand accents).
-- **Audio Feedback:** Web Audio API synthesized soft chime generator (`src/utils/sound.ts`) with mute/unmute toggle.
-- **Ergonomic Auto-Scroll (`src/hooks/useAutoScroll.ts`):** Automatically scrolls to latest message when user is already at bottom, but gracefully preserves scroll position when user is reading earlier history and displays a floating "↓ New messages below" pill.
+4. Open your browser and navigate to `http://localhost:3000`.
 
----
+## Tech Stack
+- **Framework:** Next.js (React 19)
+- **Language:** TypeScript
+- **State Management:** Redux Toolkit
+- **Styling:** Tailwind CSS
+- **Real-Time Communication:** Socket.io-client
 
-## Part 1: API Documentation Summary
-
-**Live REST API Base:** `https://frontend-task-chatapp.onrender.com/api`  
-**WebSocket Server (Socket.io):** `https://frontend-task-chatapp.onrender.com`  
-
-### Endpoints Overview:
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/auth/login` | Login with phone & name. Automatically registers new users. Returns JWT and user object. |
-| `GET` | `/auth/me` | Fetch authenticated user profile using Bearer token. |
-| `GET` | `/users/search?q={query}` | Search users by name or phone number. |
-| `GET` | `/conversations` | Retrieve all 1-to-1 and group conversations for the user. |
-| `POST` | `/conversations` | Start or open a 1-to-1 conversation with `{ userId }`. |
-| `POST` | `/conversations/group` | Create group chat with `{ name, participantIds }`. |
-| `GET` | `/conversations/{id}/messages` | Retrieve message history for conversation. |
-| `POST` | `/messages` | Send message with `{ conversationId, text }`. |
-| `POST` | `/conversations/{id}/participants` | Add participants to group. |
-| `DELETE`| `/conversations/{id}/participants/{userId}` | Remove participant or leave group. |
-| `POST` | `/conversations/{id}/admins` | Promote user to group admin. |
-| `PATCH`| `/conversations/{id}` | Rename group conversation. |
-| `WS` | `message:send` / `message:new` | Socket.io real-time event duplex. |
-
-*(The complete, detailed Markdown specification with full JSON request/response bodies is available directly inside the app under the "API Documentation" tab and in `src/components/docs/ApiDocsView.tsx`)*.
+## API Documentation
+The API documentation detailing the endpoints, request/response formats, and authentication flow is integrated directly into the application. You can view it by clicking the "API Docs" tab in the live chat application.
 
 ---
 
-## Part 3: Thought Process & Engineering Write-Up
+## Thought Process & Engineering Write-Up (Part 3)
 
-### Executive Summary
-This project delivers a production-grade, real-time messaging platform (ChatFlow) engineered with React, Next.js architectural principles, TypeScript, Redux Toolkit, and Tailwind CSS. The solution fulfills Part 1 (API Documentation & Core Chat Implementation with Socket.io real-time streaming, optimistic updates, smart auto-scroll preservation, and group administration), Part 2 (Creative Landing Page with live interactive hero simulator), and Part 3 (Comprehensive Architectural Documentation). Madagascar.
+This section summarizes my approach to the assignment, technical trade-offs, design reasoning, and how I integrated Madagascar into my workflow.
 
-### 1. Architectural Decisions & Trade-Offs
-- **Why Redux Toolkit over plain React Context:** Chat apps experience frequent, concurrent updates (incoming messages, typing telemetry, optimistic state, audio triggers). React Context forces broad re-render trees unless granularly split. Redux Toolkit provides memoized selectors (`useAppSelector`) that ensure only the active chat container re-renders when a new message arrives.
-- **Optimistic Reconciliation:** Sending a message instantly inserts a temporary message into the store with `status: 'sending'`. Upon Socket.io or REST acknowledgment, `reconcileMessage` swaps the temporary ID for the authoritative backend `_id` and marks it as `sent`.
-- **Socket.io + Fallback Polling:** While WebSocket provides sub-15ms delivery, cellular connection switches or browser sleep can silently drop connections. Our dual approach pairs real-time Socket.io events with a 6-second idempotent polling fallback.
+### 1. Architecture and Trade-Offs (Part 1)
+For state management, I chose Redux Toolkit over React Context. Chat applications require frequent and granular updates (like new messages or typing indicators). Redux Toolkit's memoized selectors prevent unnecessary re-renders across the component tree, ensuring that only the relevant chat container updates when new data arrives. 
 
-### 2. Creative Landing Page Design Rationale
-- High-contrast, dark aesthetic inspired by modern developer platforms.
-- Live interactive hero widget allowing evaluators to simulate sending messages and testing real-time socket delivery without needing to log in first.
-- Clear technical value props emphasizing latency, auto-scroll ergonomics, and group RBAC.
+To ensure a smooth user experience, I implemented optimistic updates. When a user sends a message, it immediately appears in the UI with a 'sending' status. Once the server confirms receipt (via Socket.io or HTTP response), the message is reconciled with the backend ID and marked as sent. 
 
-### 3. AI Collaboration Log
-- **AI Tools Used:** Antigravity / Gemini 3.8 coding assistant.
-- **Assisted Tasks:** Rapid OpenAPI schema extraction, foundational Redux slice boilerplate, and initial TypeScript interfaces.
-- **Human Verification & Audits:**
-  - Corrected Socket.io connection URL (root origin instead of `/api`).
-  - Audited auto-scroll behavior to prevent disruptive force-scrolling while reviewing chat history.
-  - Engineered client-side participant lookup tables to resolve ObjectID strings in messages to real user names.
-  - Implemented synthesized Web Audio API chimes without external audio dependencies.
+For real-time delivery, I used Socket.io as the primary duplex channel. However, recognizing that WebSocket connections can drop silently on mobile networks, I paired it with an idempotent background polling mechanism as a fallback. 
 
-### 4. API Quirks & Anomalies Observed
-1. **Omitted Response Schemas:** The Swagger docs only specified request structures and left responses as `Unspecified`. Verified actual payload formats using automated live curl tests.
-2. **Sender Returned as ObjectID:** The `GET /conversations/{id}/messages` endpoint returns `sender` as a string ID instead of an expanded user object, necessitating a client-side participant dictionary.
-3. **Socket Root Origin:** Socket.io is mounted at the server root (`https://frontend-task-chatapp.onrender.com/`), not the REST base path `/api`.
+### 2. Design Choices (Part 2)
+For the landing page, I went with a modern, high-contrast dark theme. The goal was to build something that feels like a polished developer tool or SaaS product. I also included an interactive hero section so evaluators can immediately test the chat and real-time delivery without having to navigate through a login screen first.
 
-### 5. Future Enhancements
-- Virtualized message windowing with `@tanstack/react-virtual` for 10,000+ message logs.
-- Direct image and media attachment uploading via S3 presigned URLs.
-- End-to-End Encryption (E2EE) using Web Crypto API.
+### 3. AI Tool Usage
+I utilized an AI coding assistant primarily for scaffolding boilerplate code and extracting TypeScript interfaces from the provided API data. 
+
+However, I relied entirely on my own implementation for the core logic, including:
+- Configuring the Socket.io connection to point to the correct root origin.
+- Building the custom auto-scroll hook to ensure it doesn't force users to the bottom if they are reading past messages.
+- Creating the client-side participant lookup table to map string IDs back to user profiles.
+- Synthesizing the audio feedback using the Web Audio API.
+
+### 4. API Quirks and Workarounds
+While working with the provided API, I noticed a few quirks that required specific handling:
+1. **Missing Response Schemas:** The provided Swagger documentation only detailed request structures. I used live `curl` tests to determine the actual response shapes and typed them accordingly.
+2. **Unresolved Sender IDs:** The `GET /conversations/{id}/messages` endpoint returns the `sender` as a raw string ID rather than an expanded user object. To display sender names, I implemented a client-side dictionary to map these IDs to participants in the active conversation.
+3. **Socket Origin Mismatch:** The WebSocket server is mounted at the root origin (`https://frontend-task-chatapp.onrender.com/`) rather than the expected `/api` base path, which required adjusting the socket connection configuration.
+
+### 5. Future Improvements
+If I had more time, I would focus on:
+- Implementing virtualized lists to efficiently render long message histories.
+- Adding End-to-End Encryption (E2EE) utilizing the Web Crypto API.
+- Supporting rich media uploads via presigned URLs.
