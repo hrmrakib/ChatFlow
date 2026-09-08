@@ -2,9 +2,8 @@
 
 This repository contains the source code for the ChatFlow frontend developer take-home assignment. It includes a real-time messaging application (Part 1), a creative landing page (Part 2), and a detailed breakdown of architectural decisions (Part 3).
 
-## Live Demos
-- **Landing Page (Part 2):** [Insert Landing Page URL]
-- **Chat Application (Part 1):** [Insert Chat App URL]
+## Live Demo
+- **Landing Page & Chat Application:** [https://chat-flow-theta.vercel.app/](https://chat-flow-theta.vercel.app/)
 
 ## Getting Started
 

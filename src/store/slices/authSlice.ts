@@ -84,7 +84,6 @@ export const authSlice = createSlice({
       state.error = null;
       localStorage.removeItem(STORAGE_KEY_TOKEN);
       localStorage.removeItem(STORAGE_KEY_USER);
-      socketService.disconnect();
     },
     clearAuthError(state) {
       state.error = null;
@@ -95,7 +94,6 @@ export const authSlice = createSlice({
       state.error = null;
       localStorage.setItem(STORAGE_KEY_TOKEN, action.payload.token);
       localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(action.payload.user));
-      socketService.connect(action.payload.token);
     },
   },
   
