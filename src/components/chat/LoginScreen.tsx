@@ -19,8 +19,8 @@ export const LoginScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isLoading, error } = useAppSelector((state) => state.auth);
 
-  const [phone, setPhone] = useState('+15550009999');
-  const [name, setName] = useState('Dev Tester');
+  const [phone, setPhone] = useState('');
+  const [name, setName] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
