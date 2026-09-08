@@ -32,21 +32,21 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onSelectTab }) => {
   }, []);
 
   return (
-    <header className="h-14 bg-slate-900 border-b border-slate-800 px-4 sm:px-6 flex items-center justify-between z-30 select-none flex-shrink-0">
+    <header className="h-16 bg-slate-950/60 backdrop-blur-xl border-b border-white/5 px-4 sm:px-6 flex items-center justify-between z-30 select-none flex-shrink-0 sticky top-0">
       {/* Brand */}
-      <div className="flex items-center space-x-3">
-        <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/30">
+      <div className="flex items-center space-x-3 group cursor-pointer">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 ring-1 ring-white/10 group-hover:scale-105 group-hover:shadow-indigo-500/40 transition-all duration-300">
           <MessageSquare className="w-4 h-4" />
         </div>
         <div className="hidden sm:block">
           <Link href={'/'}>
-          <span className="font-bold text-sm tracking-tight text-white">ChatFlow</span>
+            <span className="font-extrabold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400 drop-shadow-sm">ChatFlow</span>
           </Link>
         </div>
       </div>
 
       {/* Tabs */}
-      <nav className="flex items-center space-x-1 bg-slate-950/70 p-1 rounded-xl border border-slate-800/80">
+      <nav className="flex items-center space-x-1 bg-black/20 ring-1 ring-white/5 backdrop-blur-md p-1 rounded-2xl shadow-inner">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -55,58 +55,61 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onSelectTab }) => {
               key={tab.id}
               id={`nav-tab-${tab.id}`}
               onClick={() => onSelectTab(tab.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all ${
+              className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center space-x-2 transition-all duration-300 cursor-pointer ${
                 isActive
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                  ? 'bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-md shadow-indigo-500/20 ring-1 ring-white/10 scale-100'
+                  : 'text-slate-400 hover:text-white bg-white/5 scale-95 hover:scale-100'
               }`}
             >
-              <Icon className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">{tab.label}</span>
+              <Icon className="w-4 h-4" />
+              <span className="hidden md:inline tracking-wide">{tab.label}</span>
             </button>
           );
         })}
       </nav>
 
       {/* User Info & Actions */}
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-4">
         {/* Socket live dot indicator */}
-        <div className="hidden lg:flex items-center space-x-1.5 text-[11px] text-slate-400">
+        <div className="hidden lg:flex items-center space-x-2 text-[11px] font-medium tracking-widest uppercase">
           {connectionStatus === 'connected' ? (
-            <span className="inline-flex items-center space-x-1 text-emerald-400">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-mono text-[10px]">SOCKET ON</span>
+            <span className="inline-flex items-center space-x-2 text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full ring-1 ring-emerald-400/20">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span>Online</span>
             </span>
           ) : (
-            <span className="inline-flex items-center space-x-1 text-slate-500">
-              <span className="w-2 h-2 rounded-full bg-slate-600" />
-              <span className="font-mono text-[10px]">STANDBY</span>
+            <span className="inline-flex items-center space-x-2 text-slate-500 bg-slate-800/50 px-2.5 py-1 rounded-full ring-1 ring-slate-700/50">
+              <span className="w-2 h-2 rounded-full bg-slate-500" />
+              <span>Standby</span>
             </span>
           )}
         </div>
 
         {mounted && user ? (
-          <div className="flex items-center space-x-2 pl-2 border-l border-slate-800">
-            <div className="w-7 h-7 rounded-lg bg-indigo-950 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-300">
+          <div className="flex items-center space-x-3 pl-4 border-l border-white/10">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white shadow-md shadow-indigo-500/20 ring-2 ring-indigo-500/30">
               {user.name.slice(0, 2).toUpperCase()}
             </div>
-            <div className="hidden sm:block text-left">
-              <p className="text-xs font-semibold text-slate-200 leading-tight">{user.name}</p>
-              <p className="text-[10px] text-slate-500 leading-none">{user.phone}</p>
+            <div className="hidden sm:flex flex-col text-left">
+              <p className="text-xs font-bold text-slate-100 leading-tight tracking-wide">{user.name}</p>
+              <p className="text-[10px] text-indigo-300/80 leading-none mt-0.5">{user.phone}</p>
             </div>
             <button
               id="logout-btn"
               onClick={() => { dispatch(logout()); onSelectTab('chat'); }}
-              className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors ml-1"
+              className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all duration-300 ml-1 hover:scale-110 active:scale-95"
               title="Logout / Switch Account"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         ) : (
           <button
             onClick={() => onSelectTab('chat')}
-            className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium transition-colors"
+            className="px-5 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-500/25 ring-1 ring-white/10 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95 tracking-wide"
           >
             Log In
           </button>
