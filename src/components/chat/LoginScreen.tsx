@@ -10,7 +10,6 @@ interface DemoUserPreset {
 }
 
 const DEMO_USERS: DemoUserPreset[] = [
-  { name: 'Dev Tester', phone: '+15550009999', role: 'Primary Candidate Test Account' },
   { name: 'Alex Rivera', phone: '+15551234567', role: 'Engineering Lead' },
   { name: 'Sarah Chen', phone: '+15559876543', role: 'Product Designer' },
 ];
@@ -36,7 +35,7 @@ export const LoginScreen: React.FC = () => {
   };
 
   return (
-    <div id="login-screen" className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden">
+    <div id="login-screen" className="h-full w-full bg-slate-950 text-slate-100 flex flex-col justify-center items-center px-4 relative overflow-hidden">
       {/* Background ambient lighting */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-72 h-72 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />

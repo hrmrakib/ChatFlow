@@ -104,7 +104,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onSelectTab }) => {
         ) : (
           <button
             onClick={() => onSelectTab('chat')}
-            className="px-5 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-500/25 ring-1 ring-white/10 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95 tracking-wide"
+            className="px-5 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-500/25 ring-1 ring-white/10 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95 tracking-wide cursor-pointer"
           >
             Log In
           </button>
