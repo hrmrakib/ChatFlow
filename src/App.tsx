@@ -12,7 +12,7 @@ import { ActiveTab } from './types';
 export const AppShell: React.FC = () => {
   const dispatch = useAppDispatch();
   const { user, token } = useAppSelector((state) => state.auth);
-  const [activeTab, setActiveTab] = useState<ActiveTab>('chat');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('landing');
   const [mounted, setMounted] = useState(false);
 
   // Initialize socket listeners and backup polling
