@@ -35,7 +35,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onSelectTab }) => {
     <header className="h-16 bg-slate-950/60 backdrop-blur-xl border-b border-white/5 px-4 sm:px-6 flex items-center justify-between z-30 select-none flex-shrink-0 sticky top-0">
       {/* Brand */}
       <div className="flex items-center group cursor-pointer">
-        <button onClick={() => onSelectTab('landing')} className="block transition-transform duration-300 hover:scale-105">
+        <button onClick={() => onSelectTab('landing')} className="block transition-transform duration-300 hover:scale-105 cursor-pointer">
           <img src="/chatflow.png" alt="ChatFlow Logo" className="h-10 w-auto object-contain" />
         </button>
       </div>
