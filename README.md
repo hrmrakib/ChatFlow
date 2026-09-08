@@ -54,11 +54,16 @@ To ensure a smooth user experience, I implemented optimistic updates. When a use
 
 For real-time delivery, I used Socket.io as the primary duplex channel. However, recognizing that WebSocket connections can drop silently on mobile networks, I paired it with an idempotent background polling mechanism as a fallback. 
 
-### 2. Extra Feature: Offline Message Queue & Sync
-To go above and beyond the standard real-time requirements, I engineered a robust **Offline Message Storage** system:
+### 2. Extra Features: Offline Sync & Native Notifications
+To go above and beyond the standard real-time requirements, I engineered two robust systems:
+
+**1. Offline Message Queue & Sync:**
 - **Offline Detection:** The app listens to browser `online`/`offline` events to immediately detect network drops, showing a sticky "Network Disconnected" banner.
 - **Optimistic Queueing:** When offline, sent messages are persisted to `localStorage` instead of failing. They are rendered instantly in the UI with a distinct blue background and a "queued" clock icon, preserving the user's flow without interruptions.
 - **Auto-Sync:** The moment network connectivity is restored, a Redux thunk automatically processes the local queue, pushing all pending messages to the API sequentially and updating their UI status to "sent".
+
+**2. Native Background Notifications:**
+- Leveraging the **Web Notifications API**, the application detects if the user is tabbed away (`document.hidden`). If a new message arrives while the chat is in the background, it triggers a native OS notification, ensuring the user never misses an important update.
 
 ### 3. Design Choices (Part 2)
 For the landing page, I went with a modern, high-contrast dark theme. The goal was to build something that feels like a polished developer tool or SaaS product. I also included an interactive hero section so evaluators can immediately test the chat and real-time delivery without having to navigate through a login screen first.

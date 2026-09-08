@@ -25,6 +25,13 @@ export function useChatSocket() {
       dispatch(setConnectionStatus(status));
     });
 
+    // Request notification permission if not already granted
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    }
+
     const unsubMessage = socketService.onMessage((msg) => {
       dispatch(
         chatSlice.actions.receiveSocketMessage({
@@ -32,6 +39,23 @@ export function useChatSocket() {
           currentUserId: user?._id,
         })
       );
+
+      // Show native browser notification if app is in background
+      if (
+        typeof document !== 'undefined' &&
+        document.hidden &&
+        'Notification' in window &&
+        Notification.permission === 'granted'
+      ) {
+        const senderId = typeof msg.sender === 'string' ? msg.sender : msg.sender._id;
+        if (senderId !== user?._id) {
+          const senderName = typeof msg.sender === 'object' && msg.sender.name ? msg.sender.name : 'New Message';
+          new Notification(`ChatFlow: ${senderName}`, {
+            body: msg.text,
+            icon: '/favicon.ico',
+          });
+        }
+      }
     });
 
     const unsubConv = socketService.onConversationUpdate(() => {
