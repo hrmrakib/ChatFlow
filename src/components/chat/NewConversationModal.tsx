@@ -17,7 +17,7 @@ export const NewConversationModal: React.FC<NewConversationModalProps> = ({ isOp
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<User[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittingUserId, setSubmittingUserId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export const NewConversationModal: React.FC<NewConversationModalProps> = ({ isOp
   if (!isOpen) return null;
 
   const handleStartChat = async (targetUser: User) => {
-    setIsSubmitting(true);
+    setSubmittingUserId(targetUser._id);
     setError(null);
     try {
       await dispatch(startDirectChat(targetUser._id)).unwrap();
@@ -59,7 +59,7 @@ export const NewConversationModal: React.FC<NewConversationModalProps> = ({ isOp
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to start chat');
     } finally {
-      setIsSubmitting(false);
+      setSubmittingUserId(null);
     }
   };
 
@@ -134,10 +134,10 @@ export const NewConversationModal: React.FC<NewConversationModalProps> = ({ isOp
                 <button
                   id={`start-chat-with-${u._id}`}
                   onClick={() => handleStartChat(u)}
-                  disabled={isSubmitting}
-                  className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-xs font-medium flex items-center space-x-1.5 transition-colors shadow-sm"
+                  disabled={submittingUserId !== null}
+                  className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-xs font-medium flex items-center space-x-1.5 transition-colors shadow-sm cursor-pointer"
                 >
-                  {isSubmitting ? (
+                  {submittingUserId === u._id ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   ) : (
                     <>

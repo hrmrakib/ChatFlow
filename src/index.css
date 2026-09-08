@@ -18,3 +18,9 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #4f46e5; /* indigo-600 */
 }
+
+@layer base {
+  button, [role="button"] {
+    cursor: pointer;
+  }
+}
