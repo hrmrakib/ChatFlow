@@ -65,8 +65,45 @@ export const fetchMessages = createAsyncThunk<
   }
 });
 
+export const syncOfflineMessages = createAsyncThunk<
+  void,
+  void,
+  { state: RootState }
+>('chat/syncOfflineMessages', async (_, { getState, dispatch }) => {
+  const token = getState().auth.token;
+  if (!token) return;
+
+  const queueStr = localStorage.getItem('chat_offline_queue');
+  if (!queueStr) return;
+
+  try {
+    const queue: { tempId: string; conversationId: string; text: string; createdAt: string; sender: string }[] = JSON.parse(queueStr);
+    if (!Array.isArray(queue) || queue.length === 0) return;
+
+    const remainingQueue = [...queue];
+
+    for (const msg of queue) {
+      try {
+        const sentMsg = await api.messages.send(msg.conversationId, msg.text, token);
+        dispatch(chatSlice.actions.reconcileMessage({ tempId: msg.tempId, realMessage: sentMsg }));
+        
+        // Remove from remaining queue
+        const idx = remainingQueue.findIndex(m => m.tempId === msg.tempId);
+        if (idx > -1) remainingQueue.splice(idx, 1);
+        localStorage.setItem('chat_offline_queue', JSON.stringify(remainingQueue));
+      } catch (err) {
+        // If it fails due to network, stop processing the rest so they stay in order
+        break;
+      }
+    }
+  } catch (err) {
+    console.error('Failed to parse offline queue', err);
+    localStorage.removeItem('chat_offline_queue');
+  }
+});
+
 export const sendMessage = createAsyncThunk<
-  Message,
+  Message | null,
   { conversationId: string; text: string },
   { state: RootState }
 >('chat/sendMessage', async ({ conversationId, text }, { getState, dispatch, rejectWithValue }) => {
@@ -75,6 +112,8 @@ export const sendMessage = createAsyncThunk<
   if (!token || !user) return rejectWithValue('Not authenticated');
 
   const tempId = `temp_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+  const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
+
   const optimisticMsg: Message = {
     _id: tempId,
     tempId,
@@ -82,13 +121,31 @@ export const sendMessage = createAsyncThunk<
     sender: user._id,
     text: text.trim(),
     createdAt: new Date().toISOString(),
-    status: 'sending',
+    status: isOnline ? 'sending' : 'queued',
   };
 
   dispatch(chatSlice.actions.addOptimisticMessage(optimisticMsg));
 
   if (getState().chat.soundEnabled) {
     playMessageSentSound();
+  }
+
+  if (!isOnline) {
+    try {
+      const queueStr = localStorage.getItem('chat_offline_queue');
+      const queue = queueStr ? JSON.parse(queueStr) : [];
+      queue.push({
+        tempId,
+        conversationId,
+        text: text.trim(),
+        createdAt: optimisticMsg.createdAt,
+        sender: user._id
+      });
+      localStorage.setItem('chat_offline_queue', JSON.stringify(queue));
+    } catch (err) {
+      console.error('Failed to save message offline', err);
+    }
+    return null; // Return null to prevent rejecting
   }
 
   try {

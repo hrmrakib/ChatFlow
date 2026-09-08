@@ -8,12 +8,15 @@ import { MessageInput } from './MessageInput';
 import { NewConversationModal } from './NewConversationModal';
 import { CreateGroupModal } from './CreateGroupModal';
 import { GroupDetailsModal } from './GroupDetailsModal';
-import { MessageSquare, ArrowLeft, Users, UserPlus } from 'lucide-react';
+import { MessageSquare, ArrowLeft, Users, UserPlus, AlertTriangle } from 'lucide-react';
+import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 
 export const ChatLayout: React.FC = () => {
   const dispatch = useAppDispatch();
   const { conversations, activeConversationId } = useAppSelector((state) => state.chat);
   const { token } = useAppSelector((state) => state.auth);
+  
+  const isOnline = useNetworkStatus();
 
   const [showNewChatModal, setShowNewChatModal] = useState(false);
   const [showNewGroupModal, setShowNewGroupModal] = useState(false);
@@ -55,6 +58,13 @@ export const ChatLayout: React.FC = () => {
           !activeConversationId ? 'hidden md:flex' : 'flex'
         } flex-1 flex flex-col h-full overflow-hidden bg-slate-950 relative`}
       >
+        {!isOnline && (
+          <div className="bg-rose-950/90 text-rose-200 text-xs font-bold py-2 px-4 text-center tracking-wide flex items-center justify-center space-x-2 border-b border-rose-900 shadow-sm z-50">
+            <AlertTriangle className="w-4 h-4" />
+            <span>NETWORK DISCONNECTED. MESSAGES WILL BE QUEUED.</span>
+          </div>
+        )}
+        
         {activeConversation ? (
           <>
             {/* Mobile back button banner */}

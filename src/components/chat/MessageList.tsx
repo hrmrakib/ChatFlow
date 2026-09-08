@@ -213,7 +213,9 @@ console.log({messages})
                         <div
                           className={`px-4 py-2.5 rounded-2xl shadow-sm text-sm leading-relaxed break-words ${
                             isMe
-                              ? 'bg-indigo-600 text-white rounded-br-xs'
+                              ? msg.status === 'queued'
+                                ? 'bg-sky-600 text-white rounded-br-xs shadow-sky-600/20'
+                                : 'bg-indigo-600 text-white rounded-br-xs'
                               : 'bg-slate-900 border border-slate-800/90 text-slate-100 rounded-bl-xs'
                           }`}
                         >
@@ -222,7 +224,7 @@ console.log({messages})
                           {/* Footer: Timestamp & Delivery Status */}
                           <div
                             className={`flex items-center justify-end space-x-1 text-[10px] mt-1 select-none ${
-                              isMe ? 'text-indigo-200' : 'text-slate-500'
+                              isMe ? (msg.status === 'queued' ? 'text-sky-200' : 'text-indigo-200') : 'text-slate-500'
                             }`}
                           >
                             <span>{formatMessageTime(msg.createdAt)}</span>
@@ -231,6 +233,8 @@ console.log({messages})
                               <span className="inline-flex items-center ml-0.5">
                                 {msg.status === 'sending' ? (
                                   <Clock className="w-3 h-3 animate-pulse text-indigo-300" />
+                                ) : msg.status === 'queued' ? (
+                                  <Clock className="w-3 h-3 text-sky-200" />
                                 ) : msg.status === 'error' ? (
                                   <AlertCircle className="w-3 h-3 text-rose-300" />
                                 ) : (

@@ -38,7 +38,7 @@ export interface Message {
   sender: string | DirectParticipant;
   text: string;
   createdAt: string;
-  status?: 'sending' | 'sent' | 'error';
+  status?: 'sending' | 'sent' | 'error' | 'queued';
   tempId?: string;
   reactions?: Record<string, string[]>; // emoji -> array of user names
 }
