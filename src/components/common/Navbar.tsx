@@ -34,15 +34,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onSelectTab }) => {
   return (
     <header className="h-16 bg-slate-950/60 backdrop-blur-xl border-b border-white/5 px-4 sm:px-6 flex items-center justify-between z-30 select-none flex-shrink-0 sticky top-0">
       {/* Brand */}
-      <div className="flex items-center space-x-3 group cursor-pointer">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 ring-1 ring-white/10 group-hover:scale-105 group-hover:shadow-indigo-500/40 transition-all duration-300">
-          <MessageSquare className="w-4 h-4" />
-        </div>
-        <div className="hidden sm:block">
-          <Link href={'/'}>
-            <span className="font-extrabold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400 drop-shadow-sm">ChatFlow</span>
-          </Link>
-        </div>
+      <div className="flex items-center group cursor-pointer">
+        <button onClick={() => onSelectTab('landing')} className="block transition-transform duration-300 hover:scale-105">
+          <img src="/chatflow.png" alt="ChatFlow Logo" className="h-10 w-auto object-contain" />
+        </button>
       </div>
 
       {/* Tabs */}
