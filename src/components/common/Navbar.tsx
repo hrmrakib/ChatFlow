@@ -1,4 +1,6 @@
-import React from 'react';
+"use client"
+
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { logout } from '../../store/slices/authSlice';
 import { ActiveTab } from '../../types';
@@ -23,6 +25,11 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onSelectTab }) => {
     { id: 'chat', label: 'Chat', icon: MessageSquare },
     { id: 'landing', label: 'Showcase', icon: Sparkles },
   ];
+
+  const [mounted, setMounted] = useState(false);
+  useEffect (() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="h-14 bg-slate-900 border-b border-slate-800 px-4 sm:px-6 flex items-center justify-between z-30 select-none flex-shrink-0">
@@ -78,7 +85,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onSelectTab }) => {
           )}
         </div>
 
-        {user ? (
+        {mounted && user ? (
           <div className="flex items-center space-x-2 pl-2 border-l border-slate-800">
             <div className="w-7 h-7 rounded-lg bg-indigo-950 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-300">
               {user.name.slice(0, 2).toUpperCase()}

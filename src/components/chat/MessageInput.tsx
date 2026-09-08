@@ -9,13 +9,27 @@ interface MessageInputProps {
 
 const QUICK_EMOJIS = ['😊', '👍', '🔥', '🚀', '🎉', '💡', '❤️', '👏'];
 
+const draftStore: Record<string, string> = {};
+
 export const MessageInput: React.FC<MessageInputProps> = ({ conversationId }) => {
   const dispatch = useAppDispatch();
   const { isSendingMessage } = useAppSelector((state) => state.chat);
 
-  const [text, setText] = useState('');
+  const [text, setText] = useState(draftStore[conversationId] || '');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // Sync draft store when conversation changes
+  useEffect(() => {
+    setText(draftStore[conversationId] || '');
+  }, [conversationId]);
+
+  // Update draft store when text changes
+  useEffect(() => {
+    if (text.trim() || draftStore[conversationId]) {
+      draftStore[conversationId] = text;
+    }
+  }, [text, conversationId]);
 
   const canSend = text.trim().length > 0 && !isSendingMessage;
 
@@ -31,6 +45,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ conversationId }) =>
     if (!canSend) return;
     const trimmed = text.trim();
     setText('');
+    draftStore[conversationId] = '';
     setShowEmojiPicker(false);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';

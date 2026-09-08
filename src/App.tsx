@@ -13,11 +13,13 @@ export const AppShell: React.FC = () => {
   const dispatch = useAppDispatch();
   const { user, token } = useAppSelector((state) => state.auth);
   const [activeTab, setActiveTab] = useState<ActiveTab>('chat');
+  const [mounted, setMounted] = useState(false);
 
   // Initialize socket listeners and backup polling
   useChatSocket();
 
   useEffect(() => {
+    setMounted(true);
     if (token && !user) {
       dispatch(restoreSession());
     }
@@ -29,7 +31,7 @@ export const AppShell: React.FC = () => {
 
       <main className="flex-1 flex flex-col min-h-0 relative overflow-hidden">
         {activeTab === 'chat' && (
-          user ? <ChatLayout /> : <LoginScreen />
+          mounted && user ? <ChatLayout /> : <LoginScreen />
         )}
 
         {activeTab === 'landing' && (
