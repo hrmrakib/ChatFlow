@@ -371,7 +371,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <Activity className="w-5 h-5 text-slate-600" />
         </div>
         <p className="text-xs font-semibold uppercase tracking-widest text-slate-600">
-          ChatFlow Architecture • Take-Home Challenge
+          ChatFlow Architecture
         </p>
       </footer>
     </div>

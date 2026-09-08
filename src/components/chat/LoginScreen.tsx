@@ -47,7 +47,7 @@ export const LoginScreen: React.FC = () => {
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white">Welcome to ChatFlow</h1>
           <p className="text-slate-400 text-sm mt-1.5 leading-relaxed">
-            Real-time chat platform built for the take-home challenge. Instant registration on first login.
+            Real-time chat platform built for the challenge. Instant registration on first login.
           </p>
         </div>
 
